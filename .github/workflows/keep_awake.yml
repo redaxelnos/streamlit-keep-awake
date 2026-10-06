@@ -2,7 +2,7 @@ name: Keep Streamlit Apps Awake
 on:
   schedule:
     - cron: "0 */2 * * *" # Runs every 2 hours
-  workflow_dispatch:      # Allows you to trigger it manually via GitHub if needed
+  workflow_dispatch:      # Allows you to trigger it manually
 jobs:
   wake-apps:
     runs-on: ubuntu-latest
@@ -18,3 +18,12 @@ jobs:
           playwright install chromium
       - name: Run script
         run: python keep_awake.py
+      
+      # NEW: Upload the screenshots taken by Playwright
+      - name: Upload Screenshots for Debugging
+        uses: actions/upload-artifact@v4
+        if: always() # Runs even if the script step fails
+        with:
+          name: app-screenshots
+          path: "*.png"
+          retention-days: 7
